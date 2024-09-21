@@ -20,13 +20,13 @@ pipeline {
                 '''
             }
         }
-        stage ('test') {
+        stage('Test') {
             steps {
-            echo 'test stage'
-            sh '''
-            npm run test
-            '''
+                echo 'test stage'
+                sh '''
+                    npm run test
+                '''
+            }       
         }
     }
 }
-        
