@@ -29,14 +29,14 @@ pipeline {
                     reuseNode true
                 }
             }
-        }
             steps {
                 sh '''
                     test -f build/index.html
                     npm test
                 '''
             }
-      
+        }
+
         stage('E2E') {
             agent {
                 docker {
@@ -60,4 +60,3 @@ pipeline {
         }
     }
 }
-
