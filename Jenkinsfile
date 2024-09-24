@@ -69,7 +69,7 @@ pipeline {
 
                     post {
                         always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright Local', reportTitles: '', useWrapperFileDirectly: true])
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Local E2E', reportTitles: '', useWrapperFileDirectly: true])
                         }
                     }
                 }
@@ -90,14 +90,14 @@ pipeline {
                     echo "Deploying to staging. Site ID: $NETLIFY_SITE_ID"
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
-                    node_modules/.bin/node-jq -r '.deploy_url' deploy.json
                 '''
                 script {
-                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy.json", returnStdout: true )
+                    env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json", returnStdout: true)
                 }
             }
         }
- stage('staging E2E') {
+
+        stage('Staging E2E') {
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
@@ -106,7 +106,7 @@ pipeline {
             }
 
             environment {
-                CI_ENVIRONMENT_URL = 'https://robs-cockroaches-8005b7.netlify.app'
+                CI_ENVIRONMENT_URL = "${env.STAGING_URL}"
             }
 
             steps {
@@ -117,18 +117,18 @@ pipeline {
 
             post {
                 always {
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'staging E2E', reportTitles: '', useWrapperFileDirectly: true])
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Staging E2E', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
         }
-        stage('approval') {
-            steps{
-                timeout(15) {
-    // some block
+
+        stage('Approval') {
+            steps {
+                timeout(time: 15, unit: 'MINUTES') {
+                    input message: 'Do you wish to deploy to production?', ok: 'Yes, I am sure!'
+                }
             }
-                input message: 'do you wish to deploy the prouction', ok: 'yes i am sure'
         }
-    }
 
         stage('Deploy prod') {
             agent {
@@ -157,7 +157,7 @@ pipeline {
             }
 
             environment {
-                CI_ENVIRONMENT_URL = "${env.STAGING_URL}"
+                CI_ENVIRONMENT_URL = 'YOUR NETLIFY URL'
             }
 
             steps {
@@ -168,7 +168,7 @@ pipeline {
 
             post {
                 always {
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'prod E2E', reportTitles: '', useWrapperFileDirectly: true])
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Prod E2E', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
         }
