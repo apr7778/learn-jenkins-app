@@ -12,11 +12,12 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn Jenkins on Udemy
+          Buy ROb's Cockroach Protein on sale at a store near you 
+          Bonus buy TOPO CHICO
         </a>
       </header>
       <p>
-          Application version: 1
+          Application version: {process.env.REACT_APP_VERSION}
       </p>
     </div>
   );
