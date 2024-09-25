@@ -4,10 +4,10 @@ pipeline {
     environment {
         NETLIFY_SITE_ID = '3c4e1c9f-f107-4e11-9cca-f9dd0bf38cdf'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
-        REACT_APP_VERSION = '1.2.3'
+        REACT_APP_VERSION = "1.0.$BUILD_ID"
     }
 
-    stages {
+      stages {
 
         stage('Build') {
             agent {
@@ -76,7 +76,7 @@ pipeline {
                 }
             }
         }
-  
+
         stage('Deploy staging') {
             agent {
                 docker {
@@ -85,7 +85,7 @@ pipeline {
                 }
             }
 
-            environment{
+            environment {
                 CI_ENVIRONMENT_URL = 'STAGING_URL_TO_BE_SET'
             }
 
@@ -116,6 +116,9 @@ pipeline {
                 }
             }
 
+            environment {
+                CI_ENVIRONMENT_URL = 'YOUR NETLIFY SITE URL'
+            }
 
             steps {
                 sh '''
