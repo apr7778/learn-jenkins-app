@@ -95,8 +95,8 @@ pipeline {
                     env.STAGING_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json", returnStdout: true)
                 }
             }
-        }
-
+        }     
+        
         stage('Staging E2E') {
             agent {
                 docker {
@@ -157,7 +157,7 @@ pipeline {
             }
 
             environment {
-                CI_ENVIRONMENT_URL = 'YOUR NETLIFY URL'
+                CI_ENVIRONMENT_URL = 'https://robs-whey-protein.netlify.app/'
             }
 
             steps {
