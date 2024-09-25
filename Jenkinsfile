@@ -11,7 +11,7 @@ pipeline {
 
         stage('Docker') {
             steps {
-                sh 'docker build -t my-playright .'
+                sh 'docker build -t my-playwright .'
             }
         }
 
@@ -60,14 +60,13 @@ pipeline {
                 stage('E2E') {
                     agent {
                         docker {
-                            image 'my-playright'
+                            image 'my-playwright'
                             reuseNode true
                         }
                     }
 
                     steps {
                         sh '''
-                            npm install serve
                             node_modules/.bin/serve -s build &
                             sleep 10
                             npx playwright test  --reporter=html
@@ -86,7 +85,7 @@ pipeline {
         stage('Deploy staging') {
             agent {
                 docker {
-                    image 'my-playright'
+                    image 'my-playwright'
                     reuseNode true
                 }
             }
@@ -97,12 +96,11 @@ pipeline {
 
             steps {
                 sh '''
-                
                     netlify --version
                     echo "Deploying to staging. Site ID: $NETLIFY_SITE_ID"
                     netlify status
                     netlify deploy --dir=build --json > deploy-output.json
-                    CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json)
+                    CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy-output.json)
                     npx playwright test  --reporter=html
                 '''
             }
@@ -117,13 +115,13 @@ pipeline {
         stage('Deploy prod') {
             agent {
                 docker {
-                    image 'my-playright'
+                    image 'my-playwright'
                     reuseNode true
                 }
             }
 
             environment {
-                CI_ENVIRONMENT_URL = 'https://66f43d9e94949a0996c9eaaa--robs-whey-protein.netlify.app/'
+                CI_ENVIRONMENT_URL = 'https://66f445d394949a1610c9e8a7--robs-whey-protein.netlify.app/'
             }
 
             steps {
