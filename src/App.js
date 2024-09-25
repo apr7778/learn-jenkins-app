@@ -12,8 +12,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Buy ROb's Cockroach Protein on sale at a store near you 
-          Bonus buy TOPO CHICO
+          Learn Jenkins on Udemy
         </a>
       </header>
       <p>
