@@ -110,7 +110,7 @@ pipeline {
             }
 
             environment {
-                CI_ENVIRONMENT_URL = 'https://66f445d394949a1610c9e8a7--robs-whey-protein.netlify.app/'
+                CI_ENVIRONMENT_URL = 'https://66f445d394949a1610c9e8a7--robs-whey-protein.netlify.app'
             }
 
             steps {
