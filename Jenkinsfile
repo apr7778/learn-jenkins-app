@@ -37,7 +37,7 @@ pipeline {
             }
 
             environment {
-                AWS_S3_BUCKET = 'earn-jenkins-09-24'
+                AWS_S3_BUCKET = 'learn-jenkins-09-24'
             }
 
             steps {
