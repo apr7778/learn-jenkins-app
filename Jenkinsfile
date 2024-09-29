@@ -13,12 +13,8 @@ pipeline {
 
     stages {
 
-        
-        
-
         stage('Build') {
             agent {
-                
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
@@ -36,26 +32,24 @@ pipeline {
             }
         }
 
-            stage('Build Docker image') {
-                agent {
-                    docker {
-                        image 'my-aws-cli'
-                        reuseNode true
-                        args "-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=''"
+        stage('Build Docker image') {
+            agent {
+                docker {
+                    image 'my-aws-cli'
+                    reuseNode true
+                    args "-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=''"
                 }
             }
-
             steps {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                sh ''' 
-                    docker build  -t $AWS_DOCKER_REGISTRY/$APP_NAME:$REACT_APP_VERSION .
-                    aws ecr get-login-password | docker login --username AWS --passwordstdin $AWS_DOCKER_REGISTRY
-                    docker push $AWS_DOCKER_REGISTRY/$APP_NAME:$REACT_APP_VERSION
-                '''
+                    sh ''' 
+                        docker build  -t $AWS_DOCKER_REGISTRY/$APP_NAME:$REACT_APP_VERSION .
+                        aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DOCKER_REGISTRY
+                        docker push $AWS_DOCKER_REGISTRY/$APP_NAME:$REACT_APP_VERSION
+                    '''
+                }
             }
         }
-
-
 
         stage('AWS') {
             agent {
@@ -65,7 +59,6 @@ pipeline {
                     args "-u root --entrypoint=''"
                 }
             }
-
             steps {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
@@ -78,6 +71,5 @@ pipeline {
                 }
             }
         }
-
     }
 }
