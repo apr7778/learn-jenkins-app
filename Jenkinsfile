@@ -21,8 +21,10 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                         aws --version
-                        aws ecs register-task-definition --cli-input-json file://aws/task-definition-prod.json  
-                        aws ecs update-service --cluster andys-cluster-jenkins-prod --service learnjenkinsapp-service-prod --task-definition LearnJenkinsApp-TaskDefinition-Prod:5
+                        yum install jq -y
+                        LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition-prod.json | jq .'taskDefinition.revision')
+                        echo  $LATEST_TD_REVISION
+                        aws ecs update-service --cluster andys-cluster-jenkins-prod --service learnjenkinsapp-service-prod --task-definition LearnJenkinsApp-TaskDefinition-Prod:$LATEST_TD_REVISION
                      
                     '''
                 }
